@@ -15,28 +15,39 @@ const KEY = '15674931-a9d714b6e9d654524df198e00&q';
 
 // show images 
 const showImages = (images) => {
-  imagesArea.style.display = 'block';
-  gallery.innerHTML = '';
-
-  // show gallery title
-  galleryHeader.style.display = 'flex';
-  images.forEach(image => {
-    let div = document.createElement('div');
-    div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
-    div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
-    gallery.appendChild(div);
-  })
-  toggleSpinner();
-
+    imagesArea.style.display = 'block';
+    gallery.innerHTML = '';
+    count = 0;
+    // show gallery title
+    galleryHeader.style.display = 'flex';
+    images.forEach(image => {
+      let div = document.createElement('div');
+      div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
+      div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
+      gallery.appendChild(div);
+      count++;
+      
+    })
+    toggleSpinner();
+    if(count <= 0){
+      document.getElementById('create_slider_div').classList.add('d-none');
+      const errorMessage = document.getElementById('error_message');
+      errorMessage.innerText = 'No Image Found in the gallery!! Please try again letter';
+    }
+    else{
+      document.getElementById('create_slider_div').classList.remove('d-none');
+      const errorMessage = document.getElementById('error_message');
+      errorMessage.innerText = '';
+    }
 }
 
 const getImages = (query) => {
   toggleSpinner();
-  fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
+  const url = `https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`;
+  fetch(url)
     .then(response => response.json())
     .then(data => showImages(data.hits))
-    .catch(error => displayError('Something went wrong!! Please Try again.'));
-    // .catch(error => displayError('Something went wrong!! Please Try again.'));
+  
 }
 
 let slideIndex = 0;
@@ -140,10 +151,11 @@ sliderBtn.addEventListener('click', function () {
 const toggleSpinner = () => {
   const spinner = document.getElementById('loading_spinner');
   spinner.classList.toggle('d-none');
+  
 }
 
 // error message
-const displayError = error =>{
-  const errorMessage = document.getElementById('error_message');
-  errorMessage.innerText = error;
-}
+// const displayError = error =>{
+//   const errorMessage = document.getElementById('error_message');
+//   errorMessage.innerText = error;
+// }
