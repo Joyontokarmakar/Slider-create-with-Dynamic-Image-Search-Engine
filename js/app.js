@@ -24,16 +24,19 @@ const showImages = (images) => {
     let div = document.createElement('div');
     div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
     div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
-    gallery.appendChild(div)
+    gallery.appendChild(div);
   })
+  toggleSpinner();
 
 }
 
 const getImages = (query) => {
+  toggleSpinner();
   fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
     .then(data => showImages(data.hits))
-    .catch(err => console.log(err))
+    .catch(error => displayError('Something went wrong!! Please Try again.'));
+    // .catch(error => displayError('Something went wrong!! Please Try again.'));
 }
 
 let slideIndex = 0;
@@ -45,7 +48,7 @@ const selectItem = (event, img) => {
   if (item === -1) {
     sliders.push(img);
   } else {
-    alert('Hey, Already added !')
+    sliders.splice(item, 1);
   }
 }
 var timer
@@ -131,3 +134,16 @@ searchBtn.addEventListener('click', function () {
 sliderBtn.addEventListener('click', function () {
   createSlider()
 })
+
+
+// Spinner
+const toggleSpinner = () => {
+  const spinner = document.getElementById('loading_spinner');
+  spinner.classList.toggle('d-none');
+}
+
+// error message
+const displayError = error =>{
+  const errorMessage = document.getElementById('error_message');
+  errorMessage.innerText = error;
+}
